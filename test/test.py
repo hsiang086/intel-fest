@@ -10,8 +10,8 @@ payload = json.load(open(f"{path}/structure.json"))
 
 p = json.dumps(payload["User"])
 
-print(p)
+print(f"payload:\t{p}")
 
 res = requests.post(url, data=p)
 
-print(res.json())
+print(f"res:\t{res.json()}\ncookie:\t{res.cookies.get_dict()}")

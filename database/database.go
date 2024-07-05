@@ -22,12 +22,12 @@ func Init() {
 	_, _ = DB.Exec(string(scheme))
 }
 
-func IsUserExist(email string) bool {
+func IsUserExist(email string) (exist bool, id int) {
 	var count int
-	row := DB.QueryRow("SELECT COUNT(*) FROM user WHERE email = ?", email)
-	row.Scan(&count)
+	row := DB.QueryRow("SELECT COUNT(*), id FROM user WHERE email = ?", email)
+	row.Scan(&count, &id)
 
-	return count > 0
+	return count > 0, id
 }
 
 func IsUserIdExist(id int) bool {

@@ -1,9 +1,9 @@
 package api
 
 import (
-	"fmt"
 	"math/rand"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/hsiang086/intel-fest/database"
@@ -26,8 +26,9 @@ func Signup(c *gin.Context) {
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
-	if database.IsUserExist(content.Email) {
-		c.JSON(http.StatusOK, gin.H{"msg": "User already exist"})
+	userExist, userId := database.IsUserExist(content.Email)
+	if userExist {
+		c.JSON(http.StatusOK, gin.H{"msg": "User already exist", "id": userId})
 	} else {
 		id := generateId()
 		for {
@@ -38,6 +39,7 @@ func Signup(c *gin.Context) {
 			}
 		}
 		res := database.InsertUser(id, content.Name, content.Email, content.Password)
-		c.JSON(http.StatusOK, gin.H{"msg": fmt.Sprintf("User %d created", res)})
+		c.SetCookie("__yumm__", strconv.Itoa(id), 3600, "/", "http://127.0.0.1", false, true)
+		c.JSON(http.StatusOK, gin.H{"msg": "User created", "id": res})
 	}
 }

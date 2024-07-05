@@ -3,25 +3,22 @@ package router
 import (
 	"fmt"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
 var (
-	Port    int
-	PortStr string
-	Router  *gin.Engine
-	Server  *http.Server
+	Port   int
+	Router *gin.Engine
+	Server *http.Server
 )
 
 func Init() {
 	Port = 1588
-	PortStr = strconv.Itoa(Port)
 	Router = gin.Default()
 	Server = &http.Server{
-		Addr:           ":" + PortStr,
+		Addr:           fmt.Sprintf(":%d", Port),
 		Handler:        Router,
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
