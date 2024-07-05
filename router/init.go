@@ -2,14 +2,21 @@ package router
 
 import (
 	"fmt"
+	"net/http"
 	"strconv"
 	"time"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 var (
+	Port    int
+	PortStr string
+	Router  *gin.Engine
+	Server  *http.Server
+)
+
+func Init() {
 	Port = 1588
 	PortStr = strconv.Itoa(Port)
 	Router = gin.Default()
@@ -20,10 +27,7 @@ var (
 		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
-)
-
-func Init() {
-	Router.Use(func (c *gin.Context){
+	Router.Use(func(c *gin.Context) {
 		c.Header("X-Frame-Options", "DENY")
 		c.Header("Content-Security-Policy", "default-src 'self'; connect-src *; font-src *; script-src-elem * 'unsafe-inline'; img-src * data:; style-src * 'unsafe-inline';")
 		c.Header("X-XSS-Protection", "1; mode=block")

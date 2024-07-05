@@ -1,8 +1,7 @@
 {
   "User": {
-    "id": 13,
     "name": "Tom",
-    "email": "TWTom@gmail.com",
+    "email": "TWTom3@gmail.com",
     "password": "12345678"
   }
 }
