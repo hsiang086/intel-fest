@@ -15,7 +15,7 @@ var (
 	Server *http.Server
 )
 
-func Init() {
+func init() {
 	Host = "http://127.0.0.1"
 	Port = 1588
 	Router = gin.Default()

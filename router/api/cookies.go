@@ -4,26 +4,17 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"fmt"
-	"log"
 	"os"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
+	_ "github.com/joho/godotenv/autoload"
 )
 
 var (
 	commonIV = []byte{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f}
-	secret   string // len 32 example: "TWTom13LovesPythonBecauseHeSucks"
+	secret   = os.Getenv("SECRET") // len 32 example: "TWTom13LovesPythonBecauseHeSucks"
 )
-
-func Init() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-	secret = os.Getenv("SECRET")
-}
 
 func encrypt(id int) string {
 	idByte := []byte(strconv.Itoa(id))

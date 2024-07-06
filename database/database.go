@@ -12,7 +12,7 @@ var (
 	DB    *sql.DB
 )
 
-func Init() {
+func init() {
 	DBdir = "./database/database/"
 
 	DB, _ = sql.Open("sqlite3", DBdir+"database.db")
