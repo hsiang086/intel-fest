@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/hsiang086/intel-fest/database"
@@ -23,10 +22,6 @@ type UserLogin struct {
 
 func generateId() int {
 	return rand.Intn(1000000)
-}
-
-func setCookie(c *gin.Context, id int) {
-	c.SetCookie("__yumm__", strconv.Itoa(id), 3600, "/", "http://127.0.0.1", false, true)
 }
 
 func Signup(c *gin.Context) {
@@ -68,7 +63,7 @@ func Login(c *gin.Context) {
 	}
 	user, email := database.GetUser(userId)
 	if token, err := c.Cookie("__yumm__"); err == nil {
-		if token != strconv.Itoa(userId) {
+		if !isCookieValid(userId, token) {
 			c.JSON(http.StatusUnauthorized, gin.H{"msg": "Unauthorized"})
 			return
 		}
