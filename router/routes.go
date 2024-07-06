@@ -1,8 +1,6 @@
 package router
 
 import (
-	// "fmt"
-
 	"github.com/gin-gonic/gin"
 	"github.com/hsiang086/intel-fest/router/api"
 )
@@ -17,5 +15,6 @@ func Routes() {
 	apiRoutes := Router.Group("/api")
 	{
 		apiRoutes.POST("/signup", api.Signup)
+		apiRoutes.POST("/login", api.Login)
 	}
 }

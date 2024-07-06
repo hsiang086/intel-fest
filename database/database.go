@@ -38,6 +38,21 @@ func IsUserIdExist(id int) bool {
 	return count > 0
 }
 
+func IsUserPasswordValid(email string, password string) bool {
+	var count int
+	row := DB.QueryRow("SELECT COUNT(*) FROM user WHERE email = ? AND password = ?", email, password)
+	row.Scan(&count)
+
+	return count > 0
+}
+
+func GetUser(id int) (name string, email string) {
+	row := DB.QueryRow("SELECT name, email FROM user WHERE id = ?", id)
+	row.Scan(&name, &email)
+
+	return name, email
+}
+
 func InsertUser(id int, name string, email string, password string) int64 {
 	stmt, _ := DB.Prepare("INSERT INTO user (id, name, email, password) VALUES (?, ?, ?, ?)")
 	res, err := stmt.Exec(id, name, email, password)

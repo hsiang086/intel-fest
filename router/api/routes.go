@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -15,8 +16,17 @@ type User struct {
 	Password string `json:"password" binding:"required"`
 }
 
+type UserLogin struct {
+	Email    string `json:"email" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
+
 func generateId() int {
 	return rand.Intn(1000000)
+}
+
+func setCookie(c *gin.Context, id int) {
+	c.SetCookie("__yumm__", strconv.Itoa(id), 3600, "/", "http://127.0.0.1", false, true)
 }
 
 func Signup(c *gin.Context) {
@@ -39,7 +49,35 @@ func Signup(c *gin.Context) {
 			}
 		}
 		res := database.InsertUser(id, content.Name, content.Email, content.Password)
-		c.SetCookie("__yumm__", strconv.Itoa(id), 3600, "/", "http://127.0.0.1", false, true)
+		setCookie(c, id)
 		c.JSON(http.StatusOK, gin.H{"msg": "User created", "id": res})
+	}
+}
+
+func Login(c *gin.Context) {
+	var content UserLogin
+	if err := c.ShouldBindJSON(&content); err != nil {
+		c.Error(err)
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+	userExist, userId := database.IsUserExist(content.Email)
+	if !userExist {
+		c.JSON(http.StatusUnauthorized, gin.H{"msg": "Unauthorized"})
+		return
+	}
+	user, email := database.GetUser(userId)
+	if token, err := c.Cookie("__yumm__"); err == nil {
+		if token != strconv.Itoa(userId) {
+			c.JSON(http.StatusUnauthorized, gin.H{"msg": "Unauthorized"})
+			return
+		}
+		setCookie(c, userId)
+		c.JSON(http.StatusOK, gin.H{"msg": fmt.Sprintf("Login success as %s (%s)", user, email)})
+	} else if database.IsUserPasswordValid(content.Email, content.Password) {
+		setCookie(c, userId)
+		c.JSON(http.StatusOK, gin.H{"msg": fmt.Sprintf("Login success as %s (%s)", user, email)})
+	} else {
+		c.JSON(http.StatusUnauthorized, gin.H{"msg": "Unauthorized"})
 	}
 }

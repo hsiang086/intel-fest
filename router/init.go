@@ -9,12 +9,14 @@ import (
 )
 
 var (
+	Host   string
 	Port   int
 	Router *gin.Engine
 	Server *http.Server
 )
 
 func Init() {
+	Host = "http://127.0.0.1"
 	Port = 1588
 	Router = gin.Default()
 	Server = &http.Server{
@@ -34,5 +36,5 @@ func Init() {
 		c.Header("Permissions-Policy", "geolocation=(),midi=(),sync-xhr=(),microphone=(),camera=(),magnetometer=(),gyroscope=(),fullscreen=(self),payment=()")
 		c.Next()
 	})
-	fmt.Printf("Initialized starting at: http://127.0.0.1:%d\n", Port)
+	fmt.Printf("Initialized starting at: %s:%d\n", Host, Port)
 }
