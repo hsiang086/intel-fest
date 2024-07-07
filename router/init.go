@@ -27,6 +27,7 @@ func init() {
 		MaxHeaderBytes: 1 << 20,
 	}
 	Router.Use(func(c *gin.Context) {
+		c.Header("Access-Control-Allow-Origin", "*")
 		c.Header("X-Frame-Options", "DENY")
 		c.Header("Content-Security-Policy", "default-src 'self'; connect-src *; font-src *; script-src-elem * 'unsafe-inline'; img-src * data:; style-src * 'unsafe-inline';")
 		c.Header("X-XSS-Protection", "1; mode=block")

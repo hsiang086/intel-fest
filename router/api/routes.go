@@ -21,7 +21,7 @@ type UserLogin struct {
 }
 
 func generateId() int {
-	return rand.Intn(1000000)
+	return rand.Intn(10000000)
 }
 
 func Signup(c *gin.Context) {
@@ -44,7 +44,7 @@ func Signup(c *gin.Context) {
 			}
 		}
 		res := database.InsertUser(id, content.Name, content.Email, content.Password)
-		setCookie(c, id)
+		setCookie(c, content.Email, id)
 		c.JSON(http.StatusOK, gin.H{"msg": "User created", "id": res})
 	}
 }
@@ -63,14 +63,14 @@ func Login(c *gin.Context) {
 	}
 	user, email := database.GetUser(userId)
 	if token, err := c.Cookie("__yumm__"); err == nil {
-		if !isCookieValid(userId, token) {
+		if isCookieValid, _ := IsCookieValid(token); !isCookieValid {
 			c.JSON(http.StatusUnauthorized, gin.H{"msg": "Unauthorized"})
 			return
 		}
-		setCookie(c, userId)
+		setCookie(c, content.Email, userId)
 		c.JSON(http.StatusOK, gin.H{"msg": fmt.Sprintf("Login success as %s (%s)", user, email)})
 	} else if database.IsUserPasswordValid(content.Email, content.Password) {
-		setCookie(c, userId)
+		setCookie(c, content.Email, userId)
 		c.JSON(http.StatusOK, gin.H{"msg": fmt.Sprintf("Login success as %s (%s)", user, email)})
 	} else {
 		c.JSON(http.StatusUnauthorized, gin.H{"msg": "Unauthorized"})

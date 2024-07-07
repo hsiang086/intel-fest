@@ -6,6 +6,12 @@ import argparse
 parser = argparse.ArgumentParser()
 
 parser.add_argument(
+    "-r",
+    "--root",
+    action="store_true",
+    help="Root",
+)
+parser.add_argument(
     "-s",
     "--signup",
     action="store_true",
@@ -50,4 +56,6 @@ if args.signup:
 elif args.login:
     res = requests.post(f"{url}/api/login", json=payload["UserLogin"], cookies=cookie)
     print(f"res:\t{res.json()}\ncookie:\t{res.cookies.get_dict()}")
-
+elif args.root:
+    res = requests.get(f"{url}/", cookies=cookie)
+    print(f"res:\t{res.json()}\ncookie:\t{res.cookies.get_dict()}")
