@@ -17,10 +17,25 @@ func Root(c *gin.Context) {
 		}
 		c.JSON(200, msg)
 	}
+	c.Redirect(302, "/login")
+}
+
+func Login(c *gin.Context) {
+	c.HTML(200, "auth/index.tmpl", gin.H{
+		"use": "login",
+	})
+}
+
+func Signup(c *gin.Context) {
+	c.HTML(200, "auth/index.tmpl", gin.H{
+		"use": "signup",
+	})
 }
 
 func Routes() {
 	Router.GET("/", Root)
+	Router.GET("/login", Login)
+	Router.GET("/signup", Signup)
 
 	apiRoutes := Router.Group("/api")
 	{

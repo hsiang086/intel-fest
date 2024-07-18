@@ -45,7 +45,7 @@ func Signup(c *gin.Context) {
 		}
 		res := database.InsertUser(id, content.Name, content.Email, content.Password)
 		setCookie(c, content.Email, id)
-		c.JSON(http.StatusOK, gin.H{"msg": "User created", "id": res})
+		c.JSON(http.StatusOK, gin.H{"msg": "User created", "id": res, "success": true})
 	}
 }
 
@@ -68,10 +68,10 @@ func Login(c *gin.Context) {
 			return
 		}
 		setCookie(c, content.Email, userId)
-		c.JSON(http.StatusOK, gin.H{"msg": fmt.Sprintf("Login success as %s (%s)", user, email)})
+		c.JSON(http.StatusOK, gin.H{"msg": fmt.Sprintf("Login success as %s (%s)", user, email), "success": true})
 	} else if database.IsUserPasswordValid(content.Email, content.Password) {
 		setCookie(c, content.Email, userId)
-		c.JSON(http.StatusOK, gin.H{"msg": fmt.Sprintf("Login success as %s (%s)", user, email)})
+		c.JSON(http.StatusOK, gin.H{"msg": fmt.Sprintf("Login success as %s (%s)", user, email), "success": true})
 	} else {
 		c.JSON(http.StatusUnauthorized, gin.H{"msg": "Unauthorized"})
 	}

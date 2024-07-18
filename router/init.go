@@ -37,5 +37,6 @@ func init() {
 		c.Header("Permissions-Policy", "geolocation=(),midi=(),sync-xhr=(),microphone=(),camera=(),magnetometer=(),gyroscope=(),fullscreen=(self),payment=()")
 		c.Next()
 	})
+	Router.LoadHTMLGlob("templates/**/*")
 	fmt.Printf("Initialized starting at: %s:%d\n", Host, Port)
 }

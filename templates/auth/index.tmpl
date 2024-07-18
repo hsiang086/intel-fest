@@ -1,0 +1,141 @@
+{{ define "auth/index.tmpl" }}
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{{ .use }} Page</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                background-color: #f0f0f0;
+            }
+            .{{ .use }}-container {
+                background: white;
+                padding: 20px;
+                border-radius: 5px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+            .{{ .use }}-container h2 {
+                margin-bottom: 20px;
+            }
+            .{{ .use }}-container input {
+                width: 100%;
+                padding: 10px;
+                margin: 10px 0;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+            .{{ .use }}-container button {
+                width: 100%;
+                padding: 10px;
+                background-color: #28a745;
+                border: none;
+                color: white;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+            .{{ .use }}-container button:hover {
+                background-color: #218838;
+            }
+            #message {
+                margin-top: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="{{ .use }}-container">
+            <h2>{{ .use }}</h2>
+            <form id="{{ .use }}Form">
+                {{ if eq .use "signup" }}
+                <input
+                    type="text"
+                    id="name"
+                    placeholder="Username"
+                    required
+                />
+                {{ end }}
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="Email"
+                    required
+                />
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Password"
+                    required
+                />
+                <button type="submit">{{ .use }}</button>
+            </form>
+            <div id="message"></div>
+            {{ if eq .use "login" }}
+            <button type="button" id="signup">Sign Up</button>
+            {{ end }}
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                {{ if eq .use "login" }}
+                $("#signup").click(function () {
+                    window.location.href = "/signup";
+                });
+                {{ end }}
+                $("#{{ .use }}Form").submit(function (event) {
+                    event.preventDefault();
+
+                    {{ if eq .use "signup" }}
+                    const name = $("#name").val();
+                    {{ end }}
+                    const email = $("#email").val();
+                    const password = $("#password").val();
+
+                    $.ajax({
+                        url: "/api/{{ .use }}",
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify({
+                            {{ if eq .use "signup" }}
+                            name: name,
+                            {{ end }}
+                            email: email,
+                            password: password,
+                        }),
+                        success: function (response) {
+                            console.log(response);
+                            // if (response.success) {
+                            //     $("#message")
+                            //         .text("{{ .use }} successful!")
+                            //         .css("color", "green");
+                            // } else {
+                            //     $("#message")
+                            //         .text("Invalid name or password.")
+                            //         .css("color", "red");
+                            // }
+                            //    ^
+                            //    |
+                            // bad code //
+                            if (response.msg) {
+                                $("#message").text(response.msg)
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            $("#message")
+                                .text("An error occurred. Please try again.")
+                                .css("color", "red");
+                        },
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>
+
+{{ end }}
